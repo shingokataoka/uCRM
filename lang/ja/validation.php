@@ -152,6 +152,7 @@ return [
         'quantity' => '数量',
 
         "information" => "情報",
+        "memo" => "メモ",
         "price" => "価格",
         "shop" => "店舗",
         "category" => "カテゴリ",

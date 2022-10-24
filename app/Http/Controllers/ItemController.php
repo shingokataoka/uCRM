@@ -6,6 +6,8 @@ use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Models\Item;
 
+use Inertia\Inertia;
+
 class ItemController extends Controller
 {
     /**
@@ -15,7 +17,9 @@ class ItemController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('Items/Index', [
+            'items' => Item::select('id', 'name', 'price', 'is_selling')->get(),
+        ]);
     }
 
     /**
@@ -25,7 +29,7 @@ class ItemController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Items/Create');
     }
 
     /**
@@ -36,7 +40,14 @@ class ItemController extends Controller
      */
     public function store(StoreItemRequest $request)
     {
-        //
+        Item::create([
+            'name' => $request->name,
+            'memo' => $request->memo,
+            'price' => $request->price,
+        ]);
+        session()->flash('status', 'success');
+        session()->flash('message', '商品を登録しました。');
+        return to_route('items.index');
     }
 
     /**
@@ -47,7 +58,10 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
-        //
+        $item->text = str_replace("\n", "\r\n", $item->memo);
+        return Inertia::render('Items/Show', [
+            'item' => $item,
+        ]);
     }
 
     /**
@@ -58,7 +72,9 @@ class ItemController extends Controller
      */
     public function edit(Item $item)
     {
-        //
+        return Inertia::render('Items/Edit', [
+            'item' => $item,
+        ]);
     }
 
     /**
@@ -70,7 +86,15 @@ class ItemController extends Controller
      */
     public function update(UpdateItemRequest $request, Item $item)
     {
-        //
+       $item->name = $request->name;
+       $item->memo = $request->memo;
+       $item->price = $request->price;
+       $item->is_selling = $request->is_selling;
+       $item->save();
+
+       session()->flash('status', 'success');
+       session()->flash('message', '更新を完了しました。');
+       return to_route('items.show', $item->id);
     }
 
     /**
@@ -81,6 +105,9 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
-        //
+        $item->delete();
+        session()->flash('status', 'danger');
+        session()->flash('message', '商品情報を削除しました。');
+        return to_route('items.index');
     }
 }

@@ -15,7 +15,12 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('name');
+            $table->string('memo')->nullable();
+            $table->integer('price');
+            $table->boolean('is_selling')->default(true);
+            $table->datetime('created_at')->nullable();
+            $table->datetime('updated_at')->nullable();
         });
     }
 
