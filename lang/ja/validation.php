@@ -156,5 +156,14 @@ return [
         "price" => "価格",
         "shop" => "店舗",
         "category" => "カテゴリ",
+
+
+        'kana' => 'カナ',
+        'tel' => '電話番号',
+        'postcode' => '郵便番号',
+        'address' => '住所',
+        'birthday' => '誕生日',
+        'gender' => '性別',
+
     ],
 ];
