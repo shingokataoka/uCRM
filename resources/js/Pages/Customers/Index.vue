@@ -60,9 +60,7 @@ const searchCustomers = () => {
                                 </thead>
                                 <tbody style="color: rgb(197, 203, 211) !important; border-color: rgb(106, 117, 138) !important;">
                                 <tr v-for="customer in customers.data" :key="customer.id" style="color: rgb(197, 203, 211) !important; border-color: rgb(106, 117, 138) !important;">
-                                    <td class="px-4 py-3" style="color: rgb(197, 203, 211) !important; border-color: rgb(106, 117, 138) !important;">
-                                        <Link :href="route('customers.show', customer)" class="text-blue-300">{{ customer.id }}</Link>
-                                    </td>
+                                    <td class="px-4 py-3" style="color: rgb(197, 203, 211) !important; border-color: rgb(106, 117, 138) !important;">{{ customer.id }}</td>
                                     <td class="px-4 py-3" style="color: rgb(197, 203, 211) !important; border-color: rgb(106, 117, 138) !important;">{{ customer.name }}</td>
                                     <td class="px-4 py-3" style="color: rgb(197, 203, 211) !important; border-color: rgb(106, 117, 138) !important;">{{ customer.kana }}</td>
                                     <td class="px-4 py-3" style="color: rgb(197, 203, 211) !important; border-color: rgb(106, 117, 138) !important;">{{ customer.tel }}</td>

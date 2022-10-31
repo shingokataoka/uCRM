@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Models\Purchase;
+
 class Customer extends Model
 {
     use HasFactory;
@@ -20,6 +22,11 @@ class Customer extends Model
         'gender',
         'memo',
     ];
+
+    public function purcheses()
+    {
+        return $this->hasMany(Purchase::class);
+    }
 
     public function scopeSearchCustomers($query, $search)
     {
