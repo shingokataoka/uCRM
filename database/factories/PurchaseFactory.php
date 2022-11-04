@@ -18,9 +18,12 @@ class PurchaseFactory extends Factory
      */
     public function definition()
     {
+        $decade = fake()->DatetimeThisDecade;
+        $created_at = $decade->modify('+2 years');
         return [
             'customer_id' => rand(1,Customer::count()),
             'status' => fake()->boolean(),
+            'created_at' => $created_at,
         ];
     }
 }

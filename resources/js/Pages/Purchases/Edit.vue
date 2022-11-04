@@ -3,35 +3,35 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head} from '@inertiajs/inertia-vue3';
 
 import InputError from '@/Components/InputError.vue';
-import FlashMessage from '@/Components/FlashMessage.vue';
-import MicroModal from '@/Components/MicroModal.vue';
 
 import {onMounted, reactive, ref, computed} from 'vue';
-import {getToday} from '@/common';
 import {Inertia} from '@inertiajs/inertia';
+import {dayjs} from '@/dayjs-set';
 
 const props = defineProps({
     errors: Object,
     items: Array,
+    allItems: Array,
+    order: Object,
 });
 
 const form = reactive({
-    date: null,
-    customer_id: null,
-    status: true,
+    id: props.order.id,
+    date: props.order.created_at,
+    customer_id: props.order.customer_id,
+    status: props.order.status,
     items: [],
 });
 const itemList = ref([]);
 const quantity = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 onMounted(() => {
-    form.date = getToday();
     props.items.forEach(item => {
         itemList.value.push({
             id: item.id,
             name: item.name,
             price: item.price,
-            quantity: 0,
+            quantity: item.quantity,
         });
     });
 });
@@ -44,7 +44,7 @@ const totalPrice = computed(() => {
     return total;
 });
 
-const storePurchase = () => {
+const updatePurchase = id => {
     form.items = [];
     itemList.value.forEach(item => {
         if (item.quantity > 0) {
@@ -54,22 +54,18 @@ const storePurchase = () => {
             });
         }
     });
-    Inertia.post(route('purchases.store'), form);
-}
-
-const setCustomerId = id => {
-    form.customer_id = id;
+    Inertia.patch(route('purchases.update', {purchase: id}), form);
 }
 
 </script>
 
 <template>
-    <Head title="購入画面" />
+    <Head title="購買履歴 編集画面" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                購入画面
+                購買履歴 編集画面
             </h2>
         </template>
 
@@ -78,7 +74,7 @@ const setCustomerId = id => {
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 bg-white border-b border-gray-200">
 
-                        <form @submit.prevent="storePurchase">
+                        <form @submit.prevent="updatePurchase(form.id)">
                         <section class="text-gray-600 body-font relative" style="color: rgb(197, 203, 211) !important; border-color: rgb(106, 117, 138) !important;">
                         <div class="container px-5 py-8 mx-auto" style="border-color: rgb(106, 117, 138) !important;">
                             <div class="lg:w-1/2 md:w-2/3 mx-auto" style="border-color: rgb(106, 117, 138) !important;">
@@ -87,7 +83,7 @@ const setCustomerId = id => {
                                 <div class="p-2 w-full" style="border-color: rgb(106, 117, 138) !important;">
                                 <div class="relative" style="border-color: rgb(106, 117, 138) !important;">
                                     <label for="date" class="leading-7 text-sm text-gray-600" style="border-color: rgb(106, 117, 138) !important; color: rgb(197, 203, 211) !important;">日付</label>
-                                    <input type="date" id="date" name="date" v-model="form.date" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" style="transition-property: -background-color, -border-color, -color, fill, stroke !important; background-color: rgba(24, 27, 32, 0.5) !important; --placeholder-color:rgba(232, 229, 227, 0.6) !important; color: rgb(186, 194, 208) !important; border-color: rgb(103, 115, 132) !important;">
+                                    <input disabled type="date" id="date" name="date" :value="dayjs(props.order.created_at).format('YYYY-MM-DD')" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" style="transition-property: -background-color, -border-color, -color, fill, stroke !important; background-color: rgba(24, 27, 32, 0.5) !important; --placeholder-color:rgba(232, 229, 227, 0.6) !important; color: rgb(186, 194, 208) !important; border-color: rgb(103, 115, 132) !important;">
                                     <InputError class="mt-4" :message="errors.date" />
                                 </div>
                                 </div>
@@ -95,7 +91,7 @@ const setCustomerId = id => {
                                 <div class="p-2 w-full" style="border-color: rgb(106, 117, 138) !important;">
                                 <div class="relative" style="border-color: rgb(106, 117, 138) !important;">
                                     <label for="customer" class="leading-7 text-sm text-gray-600" style="border-color: rgb(106, 117, 138) !important; color: rgb(197, 203, 211) !important;">会員名</label>
-                                    <MicroModal @update:customerId="setCustomerId" />
+                                    <input disabled type="text" id="customer" name="customer" :value="props.order.customer_name" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" style="transition-property: -background-color, -border-color, -color, fill, stroke !important; background-color: rgba(24, 27, 32, 0.5) !important; --placeholder-color:rgba(232, 229, 227, 0.6) !important; color: rgb(186, 194, 208) !important; border-color: rgb(103, 115, 132) !important;">
                                     <InputError class="mt-4" :message="errors.customer_id" />
                                 </div>
                                 </div>
@@ -147,8 +143,27 @@ const setCustomerId = id => {
                                 </div>
                                 </div>
 
+                                <!-- ステータス -->
                                 <div class="p-2 w-full" style="border-color: rgb(106, 117, 138) !important;">
-                                <button class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg" style="background-color: rgb(7, 7, 44) !important; color: rgb(232, 229, 227) !important; border-color: rgb(84, 93, 109) !important;">登録する</button>
+                                <div class="relative" style="border-color: rgb(106, 117, 138) !important;">
+                                    <label for="" class="leading-7 text-sm text-gray-600" style="border-color: rgb(106, 117, 138) !important; color: rgb(197, 203, 211) !important;">ステータス</label>
+                                    <div class="flex justify-around">
+                                        <label>
+                                            <input type="radio" id="status" name="status"  v-model="form.status" value="1">
+                                            未キャンセル
+                                        </label>
+                                        <label>
+                                            <input type="radio" id="status" name="status"  v-model="form.status" value="0">
+                                            キャンセルする
+                                        </label>
+                                    </div>
+                                    <InputError class="mt-4" :message="errors.customer_id" />
+                                </div>
+                                </div>
+
+
+                                <div class="p-2 w-full" style="border-color: rgb(106, 117, 138) !important;">
+                                <button class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg" style="background-color: rgb(7, 7, 44) !important; color: rgb(232, 229, 227) !important; border-color: rgb(84, 93, 109) !important;">更新する</button>
                                 </div>
                             </div>
                             </div>

@@ -33,6 +33,12 @@ class ItemSeeder extends Seeder
                 'name' => 'パーマ(カット込)',
                 'memo' => 'パーマの詳細',
                 'price' => 13000,
+                'is_selling' => true,
+            ],
+            [
+                'name' => '（裏）レインボーカラー',
+                'memo' => '裏メニュー',
+                'price' => 30000,
                 'is_selling' => false,
             ],
         ]);
