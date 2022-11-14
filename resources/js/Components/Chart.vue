@@ -10,6 +10,7 @@ const props = defineProps({
 
 const labels = computed( () => props.data.labels );
 const totals = computed( () => props.data.totals );
+const type = computed( () => props.data.type);
 
 const barData = reactive({
       labels: labels,
@@ -26,7 +27,7 @@ const barData = reactive({
 
 </script>
 <template>
-    <div v-show="labels">
+    <div v-if="type != 'rfm'" v-show="labels">
       <barChart :chartData="barData"  class="h-60" />
     </div>
   </template>
